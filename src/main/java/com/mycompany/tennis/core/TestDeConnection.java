@@ -45,9 +45,9 @@ public class TestDeConnection {
             // ---------------------------------- //
         	// ----- EXECUTION DES REQUETES ----- //
             // ---------------------------------- //                     
-            //readAllJoueur(connexion);
-            //readJoueurById(connexion,idJoueur);
-            //updateJoueur(connexion, idJoueur, newNom, newPrenom);
+            readAllJoueur(connexion);
+            readJoueurById(connexion,idJoueur);
+            updateJoueur(connexion, idJoueur, newNom, newPrenom);
             
             // Valider la transaction si tout s'est bien passé
             connexion.commit();
@@ -71,13 +71,14 @@ public class TestDeConnection {
         } finally {
             
         	// Gestion des exceptions pouvant survenir lors de la fermeture de la connexion.
-            try {               
+            try {           
+            	
+            	// Réactiver l'auto-commit pour la prochaine transaction
+                connexion.setAutoCommit(true);
+                
                 if (connexion!=null) {
                     connexion.close();
                 }
-                
-                // Réactiver l'auto-commit pour la prochaine transaction
-                connexion.setAutoCommit(true);
                 
             } catch (SQLException e) {
                 e.printStackTrace();
