@@ -1,0 +1,8 @@
+<!-- Disponible uniquement dans le repository Maven Oracle : https://maven.oracle.com -->
+<dependencies>
+   <dependency>
+	<groupid>com.oracle.jdbc</groupid>
+	<artifactid>ojdbc8</artifactid>
+	<version>18.3.0.0</version>
+   </dependency>
+</dependencies>
