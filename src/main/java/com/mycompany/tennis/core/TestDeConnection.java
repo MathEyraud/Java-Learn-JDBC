@@ -94,13 +94,8 @@ public class TestDeConnection {
     private static Connection connectOracleWithDriverManager() 		throws SQLException {
         return DriverManager.getConnection(URL_ORACLE, USER_ORACLE, PASSWORD);
     }
-    //
-    //
-    //
-    //
-    //
-    // Méthode pour gérer les problèmes de connexion à la DB
     
+    // Méthode pour gérer les problèmes de connexion à la DB
     private static Connection connectMySQLWithDataSource() 			throws SQLException {
     	BasicDataSource dataSource = new BasicDataSource();
     	dataSource.setUrl(URL_MYSQL);
@@ -138,11 +133,6 @@ public class TestDeConnection {
             e1.printStackTrace();
         }
     }
-    //
-    //
-    //
-    //
-    //
     // Méthode qui récupère tous les joueurs de la table joueur
     private static void closeConnection(Connection connexion) {
         try {
@@ -156,6 +146,7 @@ public class TestDeConnection {
         }
     }
     
+    // Méthode pour lire la liste des joueurs de la DB
     public static void readAllJoueur(Connection connexion) {
     	
     	String sqlRequest = "SELECT * FROM JOUEUR";
@@ -204,11 +195,6 @@ public class TestDeConnection {
             e.printStackTrace();
 		}
     }
-    //
-    //
-    //
-    //
-    //
     // Méthode qui récupère un joueur en fonction de son id
     public static void readJoueurById(Connection connexion, long idJoueur) {
     	
@@ -259,11 +245,6 @@ public class TestDeConnection {
             e.printStackTrace();
 		}
     }
-    //
-    //
-    //
-    //
-    //
     // Méthode qui update un joueur par rapport à son id
     public static void updateJoueur(Connection connexion, long idJoueur, String newNom, String newPrenom) {
     	
@@ -299,11 +280,6 @@ public class TestDeConnection {
             e.printStackTrace();
 		}
     }
-    //
-    //
-    //
-    //
-    //
     // Méthode qui update un joueur par rapport à son id
     public static void addJoueur(Connection connexion, String nom, String prenom, String sexe) {
     	
@@ -339,11 +315,6 @@ public class TestDeConnection {
             e.printStackTrace();
 		}
     }
-    //
-    //
-    //
-    //
-    //
     // Méthode pour supprimer un joueur par son ID
     public static void deleteJoueurById(Connection connexion, long idJoueur) {
     	

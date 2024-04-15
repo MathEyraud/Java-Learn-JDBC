@@ -4,20 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import com.mycompany.tennis.core.DataSourceProvider;
 import com.mycompany.tennis.core.entity.Joueur;
+import com.mycompany.tennis.core.util.DatabaseExceptionHandler;
+import com.mycompany.tennis.core.util.DatabaseManager;
 
 public class JoueurRepositoryImpl {
-	
-    private static final String URL_MYSQL 				= "jdbc:mysql://localhost:3306/tennis?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris";
-    private static final String USER_MYSQL				= "ADMIN";
-    private static final String PASSWORD				= "Password";
-    
+	 
     private static final String sqlRequestCreate		= "INSERT JOUEUR SET NOM=?, PRENOM=?, SEXE=?";
     private static final String sqlRequestUpdate		= "UPDATE JOUEUR SET NOM=?, PRENOM=?, SEXE=? WHERE ID=?";
     private static final String sqlRequestDelete		= "DELETE FROM JOUEUR WHERE ID = ?";
@@ -33,13 +29,13 @@ public class JoueurRepositoryImpl {
         	// ----------------------------------------------------------------------------- //
         	// ----- CONNEXION AVEC LA DB VIA DATA SOURCE (AVEC DE POOL DE CONNEXIONS) ----- //
         	// ----------------------------------------------------------------------------- //
-        	DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        	connexion = dataSource.getConnection();				
-
+        	connexion = DatabaseManager.getConnection();
+        	
             // Vérifie que la transaction c'est bien déroulé (Mode manuel)
             connexion.setAutoCommit(false);
-        		
-            PreparedStatement preparedStatement = connexion.prepareStatement(sqlRequestCreate);
+       
+            // "Statement.RETURN_GENERATED_KEYS" : Permet de récupérer les valeurs auto-générésés
+            PreparedStatement preparedStatement = connexion.prepareStatement(sqlRequestCreate, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, joueur.getNom());
             preparedStatement.setString(2, joueur.getPrenom());
             preparedStatement.setString(3, joueur.getSexe().toString());
@@ -51,6 +47,14 @@ public class JoueurRepositoryImpl {
                 System.out.println("Aucun utilisateur n'a été ajouté !");
                 
             } else {
+            	
+            	// Récupérer l'ID du nouveau joueur
+            	// En récupérant les valeurs générés
+            	ResultSet newInformations = preparedStatement.getGeneratedKeys();
+            	if(newInformations.next()) {
+            		joueur.setId(newInformations.getLong(1));
+            	}
+            	 	
             	// Affichage des données du joueur actualisé
                 System.out.println("Success - Les données ont bien été ajoutés.");
             }
@@ -61,12 +65,12 @@ public class JoueurRepositoryImpl {
         // Gestion des exceptions SQL.
         } catch (SQLException e) {
         	System.out.println("Erreur lors de la création d'un joueur !");
-        	handleDatabaseException(e, connexion);
+        	DatabaseExceptionHandler.handleException(e, connexion);
         
         // Bloc finally s'exécute toujours, qu'il y ait une exception ou non. 
         // Fermeture de la connexion si elle a été établie.
-        } finally {
-        	closeConnection(connexion);
+        } finally {   
+        	DatabaseManager.closeConnection(connexion);
         }
 	}
     public void update(Joueur joueur) {
@@ -79,8 +83,7 @@ public class JoueurRepositoryImpl {
     		// ----------------------------------------------------------------------------- //
         	// ----- CONNEXION AVEC LA DB VIA DATA SOURCE (AVEC DE POOL DE CONNEXIONS) ----- //
         	// ----------------------------------------------------------------------------- //
-    		DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        	connexion = dataSource.getConnection();		
+        	connexion = DatabaseManager.getConnection();		
             
             // Vérifie que la transaction c'est bien déroulé (Mode manuel)
             connexion.setAutoCommit(false);
@@ -107,11 +110,11 @@ public class JoueurRepositoryImpl {
             }
             
 		} catch (SQLException e) {
-			System.out.println("Erreur lors de la modification d'un joueur !");
-			handleDatabaseException(e, connexion);
+			System.out.println("Erreur lors de la modification d'un joueur !");			
+			DatabaseExceptionHandler.handleException(e, connexion);
 			
-		} finally {
-			closeConnection(connexion);
+		} finally { 			
+			DatabaseManager.closeConnection(connexion);
 		}
     }
     public void delete(long idJoueur) {
@@ -124,8 +127,7 @@ public class JoueurRepositoryImpl {
     		// ----------------------------------------------------------------------------- //
         	// ----- CONNEXION AVEC LA DB VIA DATA SOURCE (AVEC DE POOL DE CONNEXIONS) ----- //
         	// ----------------------------------------------------------------------------- //
-    		DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        	connexion = dataSource.getConnection();		
+    		connexion = DatabaseManager.getConnection();	
             
             // Vérifie que la transaction c'est bien déroulé (Mode manuel)
             connexion.setAutoCommit(false);
@@ -149,11 +151,11 @@ public class JoueurRepositoryImpl {
             }
             
 		} catch (SQLException e) {
-			System.out.println("Erreur lors de la suppression du joueur.");
-			handleDatabaseException(e, connexion);
+			System.out.println("Erreur lors de la suppression du joueur.");			
+			DatabaseExceptionHandler.handleException(e, connexion);
             
 		} finally {
-        	closeConnection(connexion);
+			DatabaseManager.closeConnection(connexion);
         }
     }
     public List<Joueur> getJoueurs() {
@@ -169,8 +171,7 @@ public class JoueurRepositoryImpl {
     		// ----------------------------------------------------------------------------- //
         	// ----- CONNEXION AVEC LA DB VIA DATA SOURCE (AVEC DE POOL DE CONNEXIONS) ----- //
         	// ----------------------------------------------------------------------------- //
-    		DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        	connexion = dataSource.getConnection();			
+        	connexion = DatabaseManager.getConnection();
             
             // Vérifie que la transaction c'est bien déroulé (Mode manuel)
             connexion.setAutoCommit(false);
@@ -210,10 +211,10 @@ public class JoueurRepositoryImpl {
             
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de la récupération des joueurs.");
-			handleDatabaseException(e, connexion);
+			DatabaseExceptionHandler.handleException(e, connexion);
             
 		} finally {
-        	closeConnection(connexion);
+			DatabaseManager.closeConnection(connexion);
         }
 		
     	return joueurs;
@@ -231,8 +232,7 @@ public class JoueurRepositoryImpl {
     		// ----------------------------------------------------------------------------- //
         	// ----- CONNEXION AVEC LA DB VIA DATA SOURCE (AVEC DE POOL DE CONNEXIONS) ----- //
         	// ----------------------------------------------------------------------------- //
-    		DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        	connexion = dataSource.getConnection();			
+    		connexion = DatabaseManager.getConnection();		
             
             // Vérifie que la transaction c'est bien déroulé (Mode manuel)
             connexion.setAutoCommit(false);
@@ -262,7 +262,7 @@ public class JoueurRepositoryImpl {
             } 
             
             if (!found) {
-                System.out.println("Pas d'utilisateur !");
+                System.out.println("Pas de joueur à cette id !");
                 
             } else {
                 System.out.println("Success - Des données ont été trouvées et affichées.");
@@ -270,40 +270,13 @@ public class JoueurRepositoryImpl {
             
 		} catch (SQLException e) {
 			System.out.println("Erreur lors de la lecture du joueur.");
-			handleDatabaseException(e, connexion);
+			DatabaseExceptionHandler.handleException(e, connexion);
             
 		} finally {
-        	closeConnection(connexion);
+			DatabaseManager.closeConnection(connexion);
         }
     	
     	return joueur;
-    }
-
-    private static void handleDatabaseException(SQLException e, Connection connexion) {
-        // Ici, nous pouvons centraliser notre gestion des exceptions pour la base de données.
-        System.out.println("Erreur de connexion à la base de données.");
-        e.printStackTrace();
-        
-        // En cas d'erreur, annuler toutes les modifications effectuées au sein de cette transaction
-        try {
-            if (connexion != null) {
-                connexion.rollback();
-            }
-        } catch (SQLException e1) {
-            System.out.println("Erreur lors de l'annulation des modifications !");
-            e1.printStackTrace();
-        }
-    }
-    private static void closeConnection(Connection connexion) {
-        try {
-            if (connexion != null) {
-            	// Réactiver l'auto-commit pour la prochaine transaction
-                connexion.setAutoCommit(true);
-                connexion.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }

@@ -2,11 +2,17 @@ package com.mycompany.tennis.core.entity;
 
 public class Joueur {
 	
+	/** 
+	 * ATTRIBUTS
+	 */
 	private Long id;
 	private String nom;
 	private String prenom;
 	private Character sexe;
 	
+	/** 
+	 * CONSTRUCTEUR
+	 */
 	public Joueur() {}
 	
 	public Joueur(String nom, String prenom, String sexe) {
@@ -15,6 +21,23 @@ public class Joueur {
 		this.sexe 	= sexe.charAt(0);
 	}
 	
+	/** 
+	 * METHODES
+	 */
+	@Override
+    public String toString() {
+        return "Joueur{" +
+                "id=" 		+ this.id 		+ " / " +
+                "nom=" 		+ this.nom 		+ " / " +
+                "prenom=" 	+ this.prenom 	+ " / " +
+                "sexe=" 	+ this.sexe 	+
+                '}';
+    }
+	
+	/** 
+	 * GETTERS/SETTERS
+	 * @return
+	 */
 	public Long getId() {
 		return id;
 	}
@@ -39,6 +62,7 @@ public class Joueur {
 	public void setSexe(Character sexe) {
 		this.sexe = sexe;
 	}
+	
 	
 	
 
