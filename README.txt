@@ -1,4 +1,4 @@
-### JDBC
+# JDBC
 
 ## Introduction
 - Ce dépôt est un espace pour apprendre à utiliser JDBC de zéro. Il suffit juste de jouer avec le code.
@@ -13,7 +13,7 @@
 - L'ensemble du code n'est pas terminé, l'objectif est juste de prendre la main sur JDBC.
 
 
-### Comparaison DriverManager & DataSource
+# Comparaison DriverManager & DataSource
 
 ## DriverManager
 - Utilisation simple : DriverManager est généralement plus simple à mettre en œuvre pour les applications simples où une seule source de données est utilisée.
@@ -29,7 +29,7 @@
 En résumé, si votre application est simple et n'a pas besoin de fonctionnalités avancées telles que la gestion des transactions distribuées ou la surveillance des connexions, vous pouvez utiliser DriverManager. Cependant, pour les applications d'entreprise complexes ou celles nécessitant une gestion avancée des connexions et des transactions, l'utilisation de DataSource est généralement recommandée.
 
 
-### Comparaison Repository & Service
+# Comparaison Repository & Service
 - Utiliser des services qui interagissent avec des repositories plutôt que d'accéder directement aux repositories depuis les contrôleurs ou d'autres composants de votre application présente plusieurs avantages :
 
 ## Séparation des préoccupations (Separation of Concerns - SoC)
